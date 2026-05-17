@@ -1,0 +1,23 @@
+## .NET / ASP.NET Core
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.log
+
+## NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+## Environment / secrets
+appsettings.Production.json
+.env
+
+## Uploads folder (runtime generated)
+DallmayrTask.API/uploads/
+
+## OS
+Thumbs.db
+.DS_Store
