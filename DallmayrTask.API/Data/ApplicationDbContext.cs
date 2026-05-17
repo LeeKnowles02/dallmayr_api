@@ -20,99 +20,99 @@ public class ApplicationDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // User
-        modelBuilder.Entity<User>(entity =>
+        modelBuilder.Entity<User>(user =>
         {
-            entity.HasKey(u => u.Id);
-            entity.HasIndex(u => u.Email).IsUnique();
-            entity.Property(u => u.FullName).IsRequired().HasMaxLength(150);
-            entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
-            entity.Property(u => u.PasswordHash).IsRequired();
-            entity.Property(u => u.Role).HasConversion<string>();
+            user.HasKey(user => user.Id);
+            user.HasIndex(user => user.Email).IsUnique();
+            user.Property(user => user.FullName).IsRequired().HasMaxLength(150);
+            user.Property(user => user.Email).IsRequired().HasMaxLength(200);
+            user.Property(user => user.PasswordHash).IsRequired();
+            user.Property(user => user.Role).HasConversion<string>();
         });
 
         // Customer
-        modelBuilder.Entity<Customer>(entity =>
+        modelBuilder.Entity<Customer>(customer =>
         {
-            entity.HasKey(c => c.Id);
-            entity.Property(c => c.Name).IsRequired().HasMaxLength(200);
+            customer.HasKey(customer => customer.Id);
+            customer.Property(customer => customer.Name).IsRequired().HasMaxLength(200);
         });
 
         // Machine
-        modelBuilder.Entity<Machine>(entity =>
+        modelBuilder.Entity<Machine>(machine =>
         {
-            entity.HasKey(m => m.Id);
-            entity.HasIndex(m => m.SerialNumber).IsUnique();
-            entity.Property(m => m.MachineName).IsRequired().HasMaxLength(200);
-            entity.Property(m => m.SerialNumber).IsRequired().HasMaxLength(100);
-            entity.Property(m => m.MachineType).IsRequired().HasMaxLength(100);
+            machine.HasKey(machine => machine.Id);
+            machine.HasIndex(machine => machine.SerialNumber).IsUnique();
+            machine.Property(machine => machine.MachineName).IsRequired().HasMaxLength(200);
+            machine.Property(machine => machine.SerialNumber).IsRequired().HasMaxLength(100);
+            machine.Property(machine => machine.MachineType).IsRequired().HasMaxLength(100);
 
-            entity.HasOne(m => m.Customer)
-                  .WithMany(c => c.Machines)
-                  .HasForeignKey(m => m.CustomerId)
-                  .OnDelete(DeleteBehavior.SetNull);
+            machine.HasOne(machine => machine.Customer)
+                   .WithMany(customer => customer.Machines)
+                   .HasForeignKey(machine => machine.CustomerId)
+                   .OnDelete(DeleteBehavior.SetNull);
         });
 
         // TaskItem
-        modelBuilder.Entity<TaskItem>(entity =>
+        modelBuilder.Entity<TaskItem>(taskItem =>
         {
-            entity.HasKey(t => t.Id);
-            entity.Property(t => t.Title).IsRequired().HasMaxLength(300);
-            entity.Property(t => t.TaskType).HasConversion<string>();
-            entity.Property(t => t.Status).HasConversion<string>();
-            entity.Property(t => t.Priority).HasConversion<string>();
+            taskItem.HasKey(taskItem => taskItem.Id);
+            taskItem.Property(taskItem => taskItem.Title).IsRequired().HasMaxLength(300);
+            taskItem.Property(taskItem => taskItem.TaskType).HasConversion<string>();
+            taskItem.Property(taskItem => taskItem.Status).HasConversion<string>();
+            taskItem.Property(taskItem => taskItem.Priority).HasConversion<string>();
 
-            entity.HasOne(t => t.Customer)
-                  .WithMany(c => c.Tasks)
-                  .HasForeignKey(t => t.CustomerId)
-                  .OnDelete(DeleteBehavior.SetNull);
+            taskItem.HasOne(taskItem => taskItem.Customer)
+                    .WithMany(customer => customer.Tasks)
+                    .HasForeignKey(taskItem => taskItem.CustomerId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasOne(t => t.Machine)
-                  .WithMany(m => m.Tasks)
-                  .HasForeignKey(t => t.MachineId)
-                  .OnDelete(DeleteBehavior.SetNull);
+            taskItem.HasOne(taskItem => taskItem.Machine)
+                    .WithMany(machine => machine.Tasks)
+                    .HasForeignKey(taskItem => taskItem.MachineId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
-            entity.HasOne(t => t.Technician)
-                  .WithMany(u => u.AssignedTasks)
-                  .HasForeignKey(t => t.TechnicianId)
-                  .OnDelete(DeleteBehavior.SetNull);
+            taskItem.HasOne(taskItem => taskItem.Technician)
+                    .WithMany(technician => technician.AssignedTasks)
+                    .HasForeignKey(taskItem => taskItem.TechnicianId)
+                    .OnDelete(DeleteBehavior.SetNull);
         });
 
         // TaskHistory
-        modelBuilder.Entity<TaskHistory>(entity =>
+        modelBuilder.Entity<TaskHistory>(taskHistory =>
         {
-            entity.HasKey(h => h.Id);
-            entity.Property(h => h.Action).IsRequired().HasMaxLength(100);
-            entity.Property(h => h.OldStatus).HasConversion<string>();
-            entity.Property(h => h.NewStatus).HasConversion<string>();
+            taskHistory.HasKey(taskHistory => taskHistory.Id);
+            taskHistory.Property(taskHistory => taskHistory.Action).IsRequired().HasMaxLength(100);
+            taskHistory.Property(taskHistory => taskHistory.OldStatus).HasConversion<string>();
+            taskHistory.Property(taskHistory => taskHistory.NewStatus).HasConversion<string>();
 
-            entity.HasOne(h => h.TaskItem)
-                  .WithMany(t => t.History)
-                  .HasForeignKey(h => h.TaskItemId)
-                  .OnDelete(DeleteBehavior.Cascade);
+            taskHistory.HasOne(taskHistory => taskHistory.TaskItem)
+                       .WithMany(taskItem => taskItem.History)
+                       .HasForeignKey(taskHistory => taskHistory.TaskItemId)
+                       .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(h => h.ChangedBy)
-                  .WithMany(u => u.TaskHistories)
-                  .HasForeignKey(h => h.ChangedByUserId)
-                  .OnDelete(DeleteBehavior.Restrict);
+            taskHistory.HasOne(taskHistory => taskHistory.ChangedBy)
+                       .WithMany(user => user.TaskHistories)
+                       .HasForeignKey(taskHistory => taskHistory.ChangedByUserId)
+                       .OnDelete(DeleteBehavior.Restrict);
         });
 
         // TaskPhoto
-        modelBuilder.Entity<TaskPhoto>(entity =>
+        modelBuilder.Entity<TaskPhoto>(taskPhoto =>
         {
-            entity.HasKey(p => p.Id);
-            entity.Property(p => p.FileName).IsRequired().HasMaxLength(300);
-            entity.Property(p => p.FilePath).IsRequired().HasMaxLength(500);
-            entity.Property(p => p.ContentType).IsRequired().HasMaxLength(100);
+            taskPhoto.HasKey(taskPhoto => taskPhoto.Id);
+            taskPhoto.Property(taskPhoto => taskPhoto.FileName).IsRequired().HasMaxLength(300);
+            taskPhoto.Property(taskPhoto => taskPhoto.FilePath).IsRequired().HasMaxLength(500);
+            taskPhoto.Property(taskPhoto => taskPhoto.ContentType).IsRequired().HasMaxLength(100);
 
-            entity.HasOne(p => p.TaskItem)
-                  .WithMany(t => t.Photos)
-                  .HasForeignKey(p => p.TaskItemId)
-                  .OnDelete(DeleteBehavior.Cascade);
+            taskPhoto.HasOne(taskPhoto => taskPhoto.TaskItem)
+                     .WithMany(taskItem => taskItem.Photos)
+                     .HasForeignKey(taskPhoto => taskPhoto.TaskItemId)
+                     .OnDelete(DeleteBehavior.Cascade);
 
-            entity.HasOne(p => p.UploadedBy)
-                  .WithMany(u => u.TaskPhotos)
-                  .HasForeignKey(p => p.UploadedByUserId)
-                  .OnDelete(DeleteBehavior.Restrict);
+            taskPhoto.HasOne(taskPhoto => taskPhoto.UploadedBy)
+                     .WithMany(user => user.TaskPhotos)
+                     .HasForeignKey(taskPhoto => taskPhoto.UploadedByUserId)
+                     .OnDelete(DeleteBehavior.Restrict);
         });
 
         // Seed default admin user (password: Admin@1234)
